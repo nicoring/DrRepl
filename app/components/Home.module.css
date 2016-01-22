@@ -1,0 +1,25 @@
+.container {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.header {
+
+}
+
+.body {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+.container h2 {
+  font-size: 5rem;
+}
+
+.container a {
+  font-size: 1.4rem;
+}
