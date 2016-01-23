@@ -17,7 +17,7 @@ export default class StringObservable {
         observer.onError(err)
       }
 
-      function onCompleted(){
+      function onCompleted() {
         observer.onNext(leftOver)
         observer.onCompleted()
       }

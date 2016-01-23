@@ -3,7 +3,8 @@ import styles from './Repl.module.css'
 import Rx from 'rx'
 import update from 'react-addons-update'
 
-import ReplProcessWrapper from '../utils/ReplProcessWrapper'
+import ReplWrapperFactory from '../replwrappers/ReplWrapperFactory'
+import { LANGS } from '../replwrappers/ReplWrapperFactory'
 
 import ReplActiveInput from './repl/ReplActiveInput'
 import ReplOutput from './repl/ReplOutput'
@@ -15,11 +16,15 @@ export default class Repl extends Component {
   static TYPE_INPUT = 2;
   static BUFFER_SIZE = 100;
 
+  static propTypes = {
+    lang: React.PropTypes.oneOf(LANGS).isRequired
+  };
+
   constructor(props) {
     super(props)
 
     this.replInput = new Rx.ReplaySubject(Repl.BUFFER_SIZE)
-    this.replWrapper = new ReplProcessWrapper('scala', this.replInput)
+    this.replWrapper = ReplWrapperFactory.buildWrapperFor(this.props.lang, this.replInput)
     this.replWrapper.start()
 
     this.collectReplInputLines(this.replInput)

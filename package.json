@@ -5,6 +5,7 @@
   "description": "Simple Editor with Repl like DrRacket",
   "main": "main.js",
   "scripts": {
+    "dev": "npm run hot-server & npm run start-hot",
     "test": "better-npm-run test",
     "test-watch": "npm test -- --watch",
     "test-e2e": "better-npm-run test-e2e",

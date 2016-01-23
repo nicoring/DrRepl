@@ -43,9 +43,9 @@ app.on('ready', () => {
 
   if (process.platform === 'darwin') {
     template = [{
-      label: 'Electron',
+      label: 'DrRepl',
       submenu: [{
-        label: 'About ElectronReact',
+        label: 'About DrRepl',
         selector: 'orderFrontStandardAboutPanel:'
       }, {
         type: 'separator'
@@ -55,7 +55,7 @@ app.on('ready', () => {
       }, {
         type: 'separator'
       }, {
-        label: 'Hide ElectronReact',
+        label: 'Hide DrRepl',
         accelerator: 'Command+H',
         selector: 'hide:'
       }, {
