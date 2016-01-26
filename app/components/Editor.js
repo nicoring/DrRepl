@@ -1,9 +1,17 @@
 import React, { Component } from 'react'
+import AceEditor from 'react-ace'
 import fs from 'fs'
 
 import { LANGS, JS_LANG, SCALA_LANG, PYTHON_LANG } from '../replwrappers/ReplWrapperFactory'
 
 import styles from './Editor.module.css'
+
+import 'brace/mode/javascript'
+import 'brace/mode/python'
+import 'brace/mode/scala'
+
+import 'brace/theme/github'
+
 
 export default class Editor extends Component {
 
@@ -14,10 +22,16 @@ export default class Editor extends Component {
   static FILE_PATH_PREFIX = '/tmp/dr-repl/';
   static FILE_NAME = 'dr-repl-tmp-file';
 
-  static initialContent = {
-    [JS_LANG]: "console.log('Hello World')",
-    [SCALA_LANG]: 'println("Hello World!")',
-    [PYTHON_LANG]: "print('Hello World!')"
+  static INITIAL_CONTENT = {
+    [JS_LANG]: `console.log('Hello World')`,
+    [SCALA_LANG]: `println("Hello World!")`,
+    [PYTHON_LANG]: `print('Hello World!')`
+  };
+
+  static ACE_LANG_MAPPING = {
+    [JS_LANG]: 'javascript',
+    [PYTHON_LANG]: 'python',
+    [SCALA_LANG]: 'scala'
   };
 
   constructor(props) {
@@ -44,9 +58,7 @@ export default class Editor extends Component {
     }
   }
 
-  handleTextChange(e) {
-    e.preventDefault()
-    const content = e.target.innerText
+  handleTextChange(content) {
     this.setState({ content })
   }
 
@@ -58,20 +70,24 @@ export default class Editor extends Component {
   }
 
   getInitialContentFor(lang) {
-    return Editor.initialContent[lang]
+    return Editor.INITIAL_CONTENT[lang]
   }
 
   getContent() {
-    return this.refs.editor.innerText
+    return this.state.content
   }
 
   render() {
+    const mode = Editor.ACE_LANG_MAPPING[this.props.lang]
     return (
-      <div ref="editor"
-        className={styles.editor}
-        contentEditable={true}
-        onKeyUp={this.handleTextChange.bind(this)}>
-          { this.state.content }
+      <div className={styles.editor}>
+        <AceEditor name="dr-repl-editor"
+          mode={mode}
+          theme="github"
+          value={this.state.content}
+          onChange={this.handleTextChange.bind(this)}
+          height="100%"
+          width="100%" />
       </div>
     )
   }
