@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import fs from 'fs'
 
 import { LANGS, JS_LANG, SCALA_LANG, PYTHON_LANG } from '../replwrappers/ReplWrapperFactory'
 
@@ -10,6 +11,9 @@ export default class Editor extends Component {
     lang: React.PropTypes.oneOf(LANGS).isRequired
   };
 
+  static FILE_PATH_PREFIX = '/tmp/dr-repl/';
+  static FILE_NAME = 'dr-repl-tmp-file';
+
   static initialContent = {
     [JS_LANG]: "console.log('Hello World')",
     [SCALA_LANG]: 'println("Hello World!")',
@@ -18,7 +22,26 @@ export default class Editor extends Component {
 
   constructor(props) {
     super(props)
+    this.createDir(Editor.FILE_PATH_PREFIX)
     this.state = { content: this.getInitialContentFor(this.props.lang) }
+  }
+
+  save(cb) {
+    const file = Editor.FILE_PATH_PREFIX + Editor.FILE_NAME
+    fs.writeFile(file, this.getContent(), (err) => {
+      if (err) {
+        console.error(err)
+      }
+      cb(file)
+    })
+  }
+
+  createDir(dirPath) {
+    try {
+      fs.mkdirSync(dirPath)
+    } catch (e) {
+      if (e.code !== 'EEXIST') throw e
+    }
   }
 
   handleTextChange(e) {

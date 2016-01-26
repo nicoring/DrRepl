@@ -10,6 +10,10 @@ export default class JsWrapper extends ReplWrapper {
     super(inputObservable)
   }
 
+  reset() {
+    this.runCommand('.clear')
+  }
+
   filterOutput(aString) {
     return aString.length > 0
   }
@@ -20,5 +24,9 @@ export default class JsWrapper extends ReplWrapper {
 
   spawnRepl() {
     return spawn('node', ['-i'])
+  }
+
+  loadFile(file) {
+    this.runCommand(`.load ${file}`)
   }
 }

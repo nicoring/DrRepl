@@ -16,6 +16,10 @@ export default class ScalaWrapper extends ReplWrapper {
     super(inputObservable)
   }
 
+  reset() {
+    this.runCommand(':reset')
+  }
+
   isStartString(line) {
     return _.some(this.constructor.FILTER_STRINGS, (string) => string === line)
   }
@@ -28,5 +32,9 @@ export default class ScalaWrapper extends ReplWrapper {
 
   spawnRepl() {
     return spawn('scala')
+  }
+
+  loadFile(file) {
+    this.runCommand(`:load ${file}`)
   }
 }

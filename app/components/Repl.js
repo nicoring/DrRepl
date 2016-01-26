@@ -28,7 +28,8 @@ export default class Repl extends Component {
     this.replWrapper.start()
 
     this.collectReplInputLines(this.replInput)
-    this.collectReplOutputLines(this.replWrapper.getOutputLines())
+    this.replOutput = this.replWrapper.getOutputLines()
+    this.collectReplOutputLines(this.replOutput)
 
     this.state = {
       lines: []
@@ -36,6 +37,8 @@ export default class Repl extends Component {
   }
 
   componentWillUnmount() {
+    this.replInput.onCompleted()
+    this.replOutputSubscription.dispose()
     this.replWrapper.stop()
   }
 
@@ -52,7 +55,7 @@ export default class Repl extends Component {
   }
 
   collectReplLines(observable, type) {
-    observable.subscribe(line => {
+    this.replOutputSubscription = observable.subscribe(line => {
       const lineObj = {
         content: line,
         type: type
@@ -63,15 +66,12 @@ export default class Repl extends Component {
   }
 
   resetRepl() {
-    this.replInput.onNext(':reset')
+    this.replWrapper.reset()
     this.setState({ lines: [] })
   }
 
-  loadLines(text) {
-    this.resetRepl()
-    this.replInput.onNext(':paste')
-    this.replInput.onNext(text)
-    this.replInput.onNext(String.fromCharCode(4))
+  loadFile(file) {
+    this.replWrapper.loadFile(file)
   }
 
   render() {

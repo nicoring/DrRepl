@@ -1,4 +1,5 @@
 import RxNode from 'rx-node'
+import Rx from 'rx'
 
 import StringObservable from '../utils/StringObservable'
 
@@ -8,7 +9,8 @@ export default class ReplWrapper {
     if (typeof(inputObservable) !== 'object') {
       throw new Error('[ReplWrapper] No valid inputObservable provided')
     }
-    this.inputObservable = inputObservable
+    this.inputCommands = new Rx.Subject()
+    this.inputObservable = Rx.Observable.merge(inputObservable, this.inputCommands)
     this.replProcess = null
     this.isStarted = false
   }
@@ -26,10 +28,23 @@ export default class ReplWrapper {
   }
 
   stop() {
+    this.inputCommands.onCompleted()
     if (this.replProcess !== null) {
       this.replProcess.kill('SIGKILL')
     }
     this.isStarted = false
+  }
+
+  reset() {
+    throw new Error('Subclass responsibility')
+  }
+
+  readFile() {
+    throw new Error('Subclass responsibility')
+  }
+
+  runCommand(command) {
+    this.inputCommands.onNext(command + '\n')
   }
 
   startReadingFromInputTo(stream) {

@@ -15,11 +15,12 @@ export default class Home extends Component {
   }
 
   onStart() {
-    const text = this.refs.editor.getContent()
-    this.refs.repl.loadLines(text)
+    this.refs.editor.save((file) => {
+      this.refs.repl.loadFile(file)
+    })
   }
 
-  onStop() {
+  onReset() {
     this.refs.repl.resetRepl()
   }
 
@@ -33,7 +34,7 @@ export default class Home extends Component {
         <div className={styles.header}>
           <ControlPanel
             onStart={this.onStart.bind(this)}
-            onStop={this.onStop.bind(this)}
+            onReset={this.onReset.bind(this)}
             onLangChanged={this.onLangChanged.bind(this)}
             lang={this.state.lang} />
         </div>

@@ -9,7 +9,7 @@ export default class ControlPanel extends Component {
 
   static propTypes = {
     onStart: React.PropTypes.func.isRequired,
-    onStop: React.PropTypes.func.isRequired,
+    onReset: React.PropTypes.func.isRequired,
     onLangChanged: React.PropTypes.func.isRequired,
     lang: React.PropTypes.oneOf(LANGS).isRequired
   };
@@ -34,7 +34,7 @@ export default class ControlPanel extends Component {
         </div>
         <div className={styles.right}>
           <button onClick={this.props.onStart}>Start</button>
-          <button onClick={this.props.onStop}>Stop</button>
+          <button onClick={this.props.onReset}>Reset</button>
           <select value={this.props.lang} onChange={this.handleLangChanged.bind(this)}>
             { langs }
           </select>

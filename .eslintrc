@@ -12,6 +12,7 @@
     "react/react-in-jsx-scope": 2,
     "react/jsx-closing-bracket-location": 0,
     "react/jsx-boolean-value": 0,
+    "react/sort-comp": 0,
 
     "semi": [1, "never"],
     "no-var": 0,
