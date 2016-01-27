@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import _ from 'lodash'
 
 import { LANGS, LANG_NAME_MAPPING } from '../replwrappers/ReplWrapperFactory'
+import { KEY_BINDINGS } from './Editor'
 
 import styles from './ControlPanel.module.css'
 
@@ -11,13 +12,21 @@ export default class ControlPanel extends Component {
     onStart: React.PropTypes.func.isRequired,
     onReset: React.PropTypes.func.isRequired,
     onLangChanged: React.PropTypes.func.isRequired,
-    lang: React.PropTypes.oneOf(LANGS).isRequired
+    lang: React.PropTypes.oneOf(LANGS).isRequired,
+    onKeyBindingChanged: React.PropTypes.func.isRequired,
+    keyBinding: React.PropTypes.oneOf(Object.keys(KEY_BINDINGS)).isRequired
   };
 
   handleLangChanged(e) {
     e.preventDefault()
     const lang = e.target.value
     this.props.onLangChanged(lang)
+  }
+
+  handleKeyBindingChanged(e) {
+    e.preventDefault()
+    const keyBinding = e.target.value
+    this.props.onKeyBindingChanged(keyBinding)
   }
 
   render() {
@@ -27,13 +36,21 @@ export default class ControlPanel extends Component {
       )
     })
 
+    const keyBindings = _.map(KEY_BINDINGS, (value, key) => {
+      return (
+        <option value={key} key={key}>{ key }</option>
+      )
+    })
+
     return (
       <div className={styles.controlPanel}>
         <div className={styles.left}>
-        ControlPanel
+          <select value={this.props.keyBinding} onChange={this.handleKeyBindingChanged.bind(this)}>
+            { keyBindings }
+          </select>
         </div>
         <div className={styles.right}>
-          <button onClick={this.props.onStart}>Start</button>
+          <button onClick={this.props.onStart}>Run</button>
           <button onClick={this.props.onReset}>Reset</button>
           <select value={this.props.lang} onChange={this.handleLangChanged.bind(this)}>
             { langs }

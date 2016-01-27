@@ -12,11 +12,21 @@ import 'brace/mode/scala'
 
 import 'brace/theme/github'
 
+import 'brace/keybinding/vim'
+import 'brace/keybinding/emacs'
+
+export const KEY_BINDINGS = {
+  normal: '',
+  Vim: 'vim',
+  Emacs: 'emacs'
+}
+export const DEFAULT_KEY_BINDING = 'normal'
 
 export default class Editor extends Component {
 
   static propTypes = {
-    lang: React.PropTypes.oneOf(LANGS).isRequired
+    lang: React.PropTypes.oneOf(LANGS).isRequired,
+    keyBinding: React.PropTypes.oneOf(Object.keys(KEY_BINDINGS))
   };
 
   static FILE_PATH_PREFIX = '/tmp/dr-repl/';
@@ -79,6 +89,7 @@ export default class Editor extends Component {
 
   render() {
     const mode = Editor.ACE_LANG_MAPPING[this.props.lang]
+    const keyboardHandler = KEY_BINDINGS[this.props.keyBinding]
     return (
       <div className={styles.editor}>
         <AceEditor name="dr-repl-editor"
@@ -86,8 +97,11 @@ export default class Editor extends Component {
           theme="github"
           value={this.state.content}
           onChange={this.handleTextChange.bind(this)}
+          keyboardHandler={keyboardHandler}
           height="100%"
-          width="100%" />
+          width="100%"
+          editorProps={{ $blockScrolling: Infinity }}
+          key={keyboardHandler} />
       </div>
     )
   }
