@@ -5,7 +5,7 @@
   "description": "Simple Editor with Repl like DrRacket",
   "main": "main.js",
   "scripts": {
-    "dev": "npm run hot-server & npm run start-hot",
+    "dev": "concurrently --kill-others \"npm run hot-server\" \"npm run start-hot\"",
     "test": "better-npm-run test",
     "test-watch": "npm test -- --watch",
     "test-e2e": "better-npm-run test-e2e",
@@ -60,18 +60,14 @@
   "bin": {
     "electron": "./node_modules/.bin/electron"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/chentsulin/electron-react-boilerplate.git"
-  },
   "author": {
-    "name": "C. T. Lin",
-    "email": "chentsulin@gmail.com",
-    "url": "https://github.com/chentsulin"
+    "name": "Nico Ring",
+    "email": "ringnico@web.de",
+    "url": "https://github.com/nicoring"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/chentsulin/electron-react-boilerplate/issues"
+    "url": "https://github.com/nicoring/DrRepl/issues"
   },
   "keywords": [
     "electron",
@@ -82,7 +78,7 @@
     "webpack",
     "react-hot"
   ],
-  "homepage": "https://github.com/chentsulin/electron-react-boilerplate#readme",
+  "homepage": "https://github.com/nicoring/DrRepl#readme",
   "devDependencies": {
     "asar": "^0.9.0",
     "babel-core": "^6.3.26",
@@ -98,6 +94,7 @@
     "chai": "^3.3.0",
     "chromedriver": "^2.19.0",
     "co-mocha": "^1.1.2",
+    "concurrently": "^2.0.0",
     "css-loader": "^0.23.1",
     "css-modules-require-hook": "^2.0.2",
     "del": "^2.0.1",
