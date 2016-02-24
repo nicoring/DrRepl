@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import styles from './Repl.module.css'
 import Rx from 'rx'
-import update from 'react-addons-update'
+import { connect } from 'react-redux'
 
 import ReplWrapperFactory from '../replwrappers/ReplWrapperFactory'
 import { LANGS } from '../replwrappers/ReplWrapperFactory'
@@ -10,6 +10,9 @@ import ReplActiveInput from './repl/ReplActiveInput'
 import ReplOutput from './repl/ReplOutput'
 import ReplInput from './repl/ReplInput'
 
+import { addLine, resetLines } from '../actions/repl'
+
+@connect(state => { return { lines: state.repl } }, null, null, { withRef: true })
 export default class Repl extends Component {
 
   static TYPE_OUTPUT = 1;
@@ -17,7 +20,9 @@ export default class Repl extends Component {
   static BUFFER_SIZE = 100;
 
   static propTypes = {
-    lang: React.PropTypes.oneOf(LANGS).isRequired
+    lang: React.PropTypes.oneOf(LANGS).isRequired,
+    lines: React.PropTypes.array.isRequired,
+    dispatch: React.PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -30,13 +35,10 @@ export default class Repl extends Component {
     this.collectReplInputLines(this.replInput)
     this.replOutput = this.replWrapper.getOutputLines()
     this.collectReplOutputLines(this.replOutput)
-
-    this.state = {
-      lines: []
-    }
   }
 
   componentWillUnmount() {
+    this.props.dispatch(resetLines())
     this.replInput.onCompleted()
     this.replOutputSubscription.dispose()
     this.replWrapper.stop()
@@ -44,6 +46,10 @@ export default class Repl extends Component {
 
   handleClick() {
     this.refs.activeInput.focusInput()
+  }
+
+  handleSubmit(line) {
+    this.replInput.onNext(line)
   }
 
   collectReplInputLines(observable) {
@@ -58,16 +64,14 @@ export default class Repl extends Component {
     this.replOutputSubscription = observable.subscribe(line => {
       const lineObj = {
         content: line,
-        type: type
+        type
       }
-      const newState = update(this.state, { lines: { $push: [lineObj] } })
-      this.setState(newState)
+      this.props.dispatch(addLine(lineObj))
     })
   }
 
   resetRepl() {
     this.replWrapper.reset()
-    this.setState({ lines: [] })
   }
 
   loadFile(file) {
@@ -75,27 +79,37 @@ export default class Repl extends Component {
   }
 
   render() {
-    const lines = this.state.lines.map((lineObj, index) => {
+    const lines = this.props.lines.map((lineObj, index) => {
       const { content, type } = lineObj
       switch (type) {
         case Repl.TYPE_INPUT:
-          return <ReplInput content={content} key={index} />
+          return <ReplInput content={content} key={index} lang={this.props.lang} />
         case Repl.TYPE_OUTPUT:
-          return <ReplOutput content={content} key={index} />
+          return <ReplOutput content={content} key={index} lang={this.props.lang} />
         default:
           throw new Error('Unsupported line type of: ' + lineObj)
       }
     })
 
-    const commandHistory = this.state.lines
+    const commandHistory = this.props.lines
       .filter(lineObj => lineObj.type === Repl.TYPE_INPUT)
       .map(lineObj => lineObj.content)
+      .filter(content => content !== '')
+      .reduce((acc, value, index, commands) => {
+        if (commands[index - 1] !== commands[index]) {
+          acc.push(value)
+        }
+        return acc
+      }, [])
       .reverse()
 
     return (
       <div className={styles.repl} onClick={this.handleClick.bind(this)}>
         {lines}
-        <ReplActiveInput ref="activeInput" commandHistory={commandHistory} replInput={this.replInput}/>
+        <ReplActiveInput ref="activeInput"
+          lang={this.props.lang}
+          commandHistory={commandHistory}
+          onSubmit={this.handleSubmit.bind(this)} />
       </div>
     )
   }
