@@ -1,18 +1,16 @@
-import React, { Component } from 'react';
+import ReplLine from './ReplLine'
 
-export default class ReplInput extends Component {
-
-  static propTypes = {
-    content: React.PropTypes.string,
-  };
+export default class ReplInput extends ReplLine {
 
   constructor(props) {
-    super(props);
+    super(props)
   }
 
-  render() {
-    return (
-      <div className="repl-input">&gt; {this.props.content}</div>
-    );
+  getClassName() {
+    return 'repl-input'
+  }
+
+  getContent() {
+    return '> ' + this.props.content
   }
 }

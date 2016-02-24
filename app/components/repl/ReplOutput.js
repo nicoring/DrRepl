@@ -1,18 +1,16 @@
-import React, { Component } from 'react'
+import ReplLine from './ReplLine'
 
-export default class ReplOutput extends Component {
-
-  static propTypes = {
-    content: React.PropTypes.string
-  };
+export default class ReplOutput extends ReplLine {
 
   constructor(props) {
     super(props)
   }
 
-  render() {
-    return (
-      <div className="repl-output">{this.props.content}</div>
-    )
+  getClassName() {
+    return 'repl-output'
+  }
+
+  getContent() {
+    return this.props.content
   }
 }

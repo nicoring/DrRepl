@@ -1,12 +1,15 @@
 import React, { Component } from 'react'
-import styles from './ReplActiveInput.module.css'
 
+import setSelectionRange from '../../utils/setSelectionRange'
+
+import styles from './ReplActiveInput.module.css'
 
 export default class ReplActiveInput extends Component {
 
   static propTypes = {
-    replInput: React.PropTypes.object.isRequired,
-    commandHistory: React.PropTypes.arrayOf(React.PropTypes.string)
+    commandHistory: React.PropTypes.arrayOf(React.PropTypes.string),
+    onSubmit: React.PropTypes.func.isRequired,
+    lang: React.PropTypes.string.isRequired
   };
 
   constructor(props) {
@@ -32,20 +35,22 @@ export default class ReplActiveInput extends Component {
       case 'Enter':
         e.preventDefault()
         const text = e.target.innerText
-        this.props.replInput.onNext(text)
-        e.target.innerText = ''
+        this.props.onSubmit(text)
+        this.setInput('')
         break
       default:
-
     }
+  }
+
+  onChange(line) {
+    this.setInput(line.target.innerText)
   }
 
   setInput(line) {
     const input = this.refs.replInput
     input.innerText = line
-    // input.selectionStart = input.selectionEnd = line.length - 1
-    // console.log('line: ', line)
-    // console.log("sel: ", line.length - 1)
+    const last = line.length
+    setSelectionRange(input, last, last)
   }
 
   goUpInHistory() {
@@ -87,8 +92,8 @@ export default class ReplActiveInput extends Component {
         <div ref="replInput"
           className={styles.replActiveInput}
           contentEditable={true}
-          onKeyDown={this.onKeyDown.bind(this)} >
-        </div>
+          onKeyDown={this.onKeyDown.bind(this)}
+          onInput={this.onChange.bind(this)} />
       </div>
     )
   }

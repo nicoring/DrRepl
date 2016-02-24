@@ -6,11 +6,7 @@ import { LANGS, JS_LANG, SCALA_LANG, PYTHON_LANG } from '../replwrappers/ReplWra
 
 import styles from './Editor.module.css'
 
-import 'brace/mode/javascript'
-import 'brace/mode/python'
-import 'brace/mode/scala'
-
-import 'brace/theme/github'
+import '../utils/aceImports'
 
 import 'brace/keybinding/vim'
 import 'brace/keybinding/emacs'
@@ -20,13 +16,16 @@ export const KEY_BINDINGS = {
   Vim: 'vim',
   Emacs: 'emacs'
 }
+
+export const KEY_BINDING_NAMES = Object.keys(KEY_BINDINGS)
+
 export const DEFAULT_KEY_BINDING = 'normal'
 
 export default class Editor extends Component {
 
   static propTypes = {
     lang: React.PropTypes.oneOf(LANGS).isRequired,
-    keyBinding: React.PropTypes.oneOf(Object.keys(KEY_BINDINGS))
+    keyBinding: React.PropTypes.oneOf(KEY_BINDING_NAMES)
   };
 
   static FILE_PATH_PREFIX = '/tmp/dr-repl/';
@@ -88,8 +87,11 @@ export default class Editor extends Component {
   }
 
   render() {
-    const mode = Editor.ACE_LANG_MAPPING[this.props.lang]
-    const keyboardHandler = KEY_BINDINGS[this.props.keyBinding]
+    const { lang, keyBinding } = this.props
+    const mode = lang in Editor.ACE_LANG_MAPPING ?
+      Editor.ACE_LANG_MAPPING[lang] :
+      'plain_text'
+    const keyboardHandler = KEY_BINDINGS[keyBinding]
     return (
       <div className={styles.editor}>
         <AceEditor name="dr-repl-editor"
